@@ -15,7 +15,7 @@ func TestCreateDNSQuery(t *testing.T) {
 		t.Errorf("Length of query is not correct: got %d, expected at least %d", len(query), headerSize)
 	}
 
-	expectedBytes := []byte{7, 'g', 'o', 'o', 'g', 'l', 'e', 3, 'c', 'o', 'm'}
+	expectedBytes := []byte{6, 'g', 'o', 'o', 'g', 'l', 'e', 3, 'c', 'o', 'm'}
 
 	if !bytes.Contains(query, expectedBytes) {
 		t.Errorf("Query incorrect: got %v, expected %v", query, expectedBytes)
