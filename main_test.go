@@ -46,15 +46,12 @@ func TestParseResponse(t *testing.T) {
 		0x06, 'g', 'o', 'o', 'g', 'l', 'e', 0x03, 'c', 'o', 'm', 0x00, // Question
 		0x00, 0x01, 0x00, 0x01, // Type A, Class IN
 		0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x04, // Answer
-		0x85, 0xfb, 0xd0, 0xae, // IP: 142.251.208.174 (exemplu pentru google.com)
+		0x85, 0xfb, 0xd0, 0xae, // IP: 133.251.208.174
 	}
 
-	parsedIPs, err := parseResponse(response)
-	if err != nil {
-		t.Fatalf("Erorr in parsing response: %v", err)
-	}
+	parsedIPs := parseResponse(response)
 
-	expectedIP := "93.184.216.34"
+	expectedIP := "133.251.208.174"
 	if len(parsedIPs) == 0 || parsedIPs[0] != expectedIP {
 		t.Errorf("Error in getting IP address: got %s, expected %v", parsedIPs, expectedIP)
 	}

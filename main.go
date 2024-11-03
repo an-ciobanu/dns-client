@@ -87,6 +87,26 @@ func sendDNSQuery(packet []byte, server string) ([]byte, error) {
 /*
 *	parseResponse: parseaza raspunsul de la server din biti in IP
  */
-func parseResponse(response []byte) ([]string, error) {
-	return make([]string, 1), nil
+func parseResponse(response []byte) []string {
+	offset := 12 //sarim peste header
+
+	//sarim peste question section
+	for response[offset] != 0 {
+		offset++
+	}
+
+	offset += 5 //sarim si pentru terminator, tip si clasa
+
+	var ips []string
+
+	answerCount := int(binary.BigEndian.Uint16(response[6:8])) // numarul de raspunsuri
+	for i := 0; i < answerCount; i++ {
+		offset += 10 // sari peste nume, tip, clasă, TTL
+		dataLen := binary.BigEndian.Uint16(response[offset : offset+2])
+		offset += 2
+		ip := net.IP(response[offset : offset+int(dataLen)])
+		ips = append(ips, ip.String())
+		offset += int(dataLen)
+	}
+	return ips
 }
