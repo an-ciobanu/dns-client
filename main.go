@@ -50,6 +50,8 @@ func createDNSQuery(domain string) []byte {
 	return query.Bytes()
 }
 
-func sendDNSQuery() {}
+func sendDNSQuery(query []byte, domain string) ([]byte, error) {
+	return make([]byte, headerSize), nil
+}
 
 func parseResponse() {}

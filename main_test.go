@@ -22,6 +22,20 @@ func TestCreateDNSQuery(t *testing.T) {
 	}
 }
 
-func TestSendDNSQuery(t *testing.T) {}
+func TestSendDNSQuery(t *testing.T) {
+	domain := "google.com"
+	server := "8.8.8.8"
+
+	query := createDNSQuery(domain)
+
+	response, err := sendDNSQuery(query, server)
+	if err != nil {
+		t.Errorf("Error in sending DNS query: %v", err)
+	}
+
+	if !bytes.Contains(response, query) {
+		t.Errorf("Response does not contain initial query: response %v, query %v", response, query)
+	}
+}
 
 func TestParseResponse(t *testing.T) {}
