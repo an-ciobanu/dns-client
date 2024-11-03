@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"net"
+	"os"
 	"time"
 )
 
@@ -17,6 +19,29 @@ const (
 
 func main() {
 
+	if len(os.Args) < 2 {
+		fmt.Println("Use: go run dns-client.go <domain> [<DNS server>]")
+		return
+	}
+	domain := os.Args[1]
+	server := "8.8.8.8" // DNS implicit: Google
+
+	// dacă utilizatorul specifică un server DNS, îl folosim
+	if len(os.Args) > 2 {
+		server = os.Args[2]
+	}
+
+	packet := createDNSQuery(domain)
+
+	response, err := sendDNSQuery(packet, server)
+	if err != nil {
+		fmt.Println("Error in sending DNS query:", err)
+		return
+	}
+
+	for _, ip := range parseResponse(response) {
+		fmt.Println(ip)
+	}
 }
 
 /*
