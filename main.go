@@ -57,6 +57,9 @@ func createDNSQuery(domain string) []byte {
 	return query.Bytes()
 }
 
+/*
+*	sendDNSQuery: trimite queryul DNS la server
+ */
 func sendDNSQuery(packet []byte, server string) ([]byte, error) {
 	conn, err := net.Dial("udp", net.JoinHostPort(server, port))
 	if err != nil {
@@ -81,4 +84,9 @@ func sendDNSQuery(packet []byte, server string) ([]byte, error) {
 	return response[:n], nil
 }
 
-func parseResponse() {}
+/*
+*	parseResponse: parseaza raspunsul de la server din biti in IP
+ */
+func parseResponse(response []byte) ([]string, error) {
+	return make([]string, 1), nil
+}

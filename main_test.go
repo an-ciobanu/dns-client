@@ -22,6 +22,7 @@ func TestCreateDNSQuery(t *testing.T) {
 	}
 }
 
+// test pentru sendDNSQuery
 func TestSendDNSQuery(t *testing.T) {
 	domain := "google.com"
 	server := "8.8.8.8"
@@ -38,4 +39,23 @@ func TestSendDNSQuery(t *testing.T) {
 	}
 }
 
-func TestParseResponse(t *testing.T) {}
+func TestParseResponse(t *testing.T) {
+	// Simulăm un răspuns DNS care conține o singură adresă IP
+	response := []byte{
+		0x12, 0x34, 0x81, 0x80, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, // Header
+		0x06, 'g', 'o', 'o', 'g', 'l', 'e', 0x03, 'c', 'o', 'm', 0x00, // Question
+		0x00, 0x01, 0x00, 0x01, // Type A, Class IN
+		0xc0, 0x0c, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x04, // Answer
+		0x85, 0xfb, 0xd0, 0xae, // IP: 142.251.208.174 (exemplu pentru google.com)
+	}
+
+	parsedIPs, err := parseResponse(response)
+	if err != nil {
+		t.Fatalf("Erorr in parsing response: %v", err)
+	}
+
+	expectedIP := "93.184.216.34"
+	if len(parsedIPs) == 0 || parsedIPs[0] != expectedIP {
+		t.Errorf("Error in getting IP address: got %s, expected %v", parsedIPs, expectedIP)
+	}
+}
