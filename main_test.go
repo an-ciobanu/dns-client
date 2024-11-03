@@ -33,7 +33,7 @@ func TestSendDNSQuery(t *testing.T) {
 		t.Errorf("Error in sending DNS query: %v", err)
 	}
 
-	if !bytes.Contains(response, query) {
+	if !bytes.Contains(response, query[12:]) {
 		t.Errorf("Response does not contain initial query: response %v, query %v", response, query)
 	}
 }

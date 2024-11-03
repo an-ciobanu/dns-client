@@ -3,13 +3,16 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"net"
+	"time"
 )
 
 const (
-	port       = "53" //port default pentru DNS
-	queryTypeA = 1    //IPv4
-	queryClass = 1    //IN
-	headerSize = 12   //numarul de biti pentru headerul DNS
+	port         = "53" //port default pentru DNS
+	queryTypeA   = 1    //IPv4
+	queryClass   = 1    //IN
+	headerSize   = 12   //numarul de biti pentru headerul DNS
+	responseSize = 512  //dimensiunea default la raspunsul DNS
 )
 
 func main() {
@@ -47,11 +50,35 @@ func createDNSQuery(domain string) []byte {
 		query.Write(part)
 	}
 	query.WriteByte(0) //termiantorul de domeniu
+
+	// Question - tip și clasă
+	binary.Write(&query, binary.BigEndian, uint16(queryTypeA))
+	binary.Write(&query, binary.BigEndian, uint16(queryClass))
 	return query.Bytes()
 }
 
-func sendDNSQuery(query []byte, domain string) ([]byte, error) {
-	return make([]byte, headerSize), nil
+func sendDNSQuery(packet []byte, server string) ([]byte, error) {
+	conn, err := net.Dial("udp", net.JoinHostPort(server, port))
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close() //inchidem conexiunea cu defer
+
+	conn.SetDeadline(time.Now().Add(5 * time.Second))
+
+	// trimite cererea DNS
+	_, err = conn.Write(packet)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]byte, responseSize) // Dimensiunea standard a unui pachet DNS
+	n, err := conn.Read(response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response[:n], nil
 }
 
 func parseResponse() {}
